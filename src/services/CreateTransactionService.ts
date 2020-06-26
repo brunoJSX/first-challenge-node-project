@@ -15,6 +15,12 @@ class CreateTransactionService {
   }
 
   public execute({ title, type, value }: Request): Transaction {
+    const balance = this.transactionsRepository.getBalance();
+
+    if (type === 'outcome' && value > balance.total) {
+      throw new Error('Outcome cannot to extrapolate total balance.');
+    }
+
     const transaction = this.transactionsRepository.create({
       title,
       type,
